@@ -226,7 +226,7 @@ void Yamanoto::serialize(Archive& ar, unsigned /*version*/)
 	             "sccMode",   sccMode,
 	             "bankRegs",  bankRegs);
 }
-INSTANTIATE_SERIALIZE_METHODS(KonamiUltimateCollection);
-REGISTER_MSXDEVICE(KonamiUltimateCollection, "KonamiUltimateCollection");
+INSTANTIATE_SERIALIZE_METHODS(Yamanooto);
+REGISTER_MSXDEVICE(Yamanooto, "Yamanooto");
 
 } // namespace openmsx

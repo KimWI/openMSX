@@ -320,6 +320,7 @@ sources = files(
     'memory/SRAM.cc',
     'memory/SdCard.cc',
     'memory/TrackedRam.cc',
+    'memory/Yamanooto.cc',
     'security/SocketStreamWrapper.cc',
     'security/SspiNegotiateServer.cc',
     'security/SspiUtils.cc',
