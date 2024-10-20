@@ -322,7 +322,7 @@ class SDL2(Library):
 class SDL2_ttf(Library):
 	libName = 'SDL2_ttf'
 	makeName = 'SDL2_TTF'
-	header = '<SDL_ttf.h>'
+	header = '<SDL2/SDL_ttf.h>'
 	function = 'TTF_OpenFont'
 	dependsOn = ('SDL2', 'FREETYPE')
 
