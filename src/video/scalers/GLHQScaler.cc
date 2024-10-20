@@ -89,15 +89,15 @@ void GLHQScaler::scaleImage(
 	unsigned dstStartY, unsigned dstEndY, unsigned dstWidth,
 	unsigned logSrcHeight)
 {
-	unsigned factorX = dstWidth / srcWidth; // 1 - 4
+	unsigned factorY = (dstEndY - dstStartY) / (srcEndY - srcStartY); // 1 - 4
 
-	if ((factorX >= 2) && ((srcWidth % 320) == 0)) {
+	if ((factorY >= 2) && ((srcWidth % 320) == 0)) {
 		assert(src.getHeight() == 2 * 240);
 		setup(superImpose != nullptr);
 		glActiveTexture(GL_TEXTURE4);
-		weightTexture[factorX - 2].bind();
+		weightTexture[factorY - 2].bind();
 		glActiveTexture(GL_TEXTURE3);
-		offsetTexture[factorX - 2].bind();
+		offsetTexture[factorY - 2].bind();
 		glActiveTexture(GL_TEXTURE2);
 		edgeTexture.bind();
 		glActiveTexture(GL_TEXTURE0);
