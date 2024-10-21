@@ -4,7 +4,6 @@
 #include "MSXRom.hh"
 #include "AmdFlash.hh"
 #include "SCC.hh"
-#include "DACSound8U.hh"
 #include <array>
 
 namespace openmsx {
@@ -38,7 +37,6 @@ private:
 private:
 	AmdFlash flash;
 	SCC scc;
-	DACSound8U dac;
 
 	byte mapperReg;
 	byte offsetReg;

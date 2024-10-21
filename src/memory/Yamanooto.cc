@@ -36,11 +36,10 @@ all Konami and Konami SCC ROMs should work with "Konami" mapper in KUC.
 namespace openmsx {
 
 Yamanooto::Yamanooto(
-		const DeviceConfig& config, Rom&& rom_)
+	const DeviceConfig& config, Rom&& rom_)
 	: MSXRom(config, std::move(rom_))
 	, flash(rom, AmdFlashChip::M29W640GB, {}, config)
 	, scc("KUC SCC", config, getCurrentTime(), SCC::Mode::Compatible)
-	, dac("KUC DAC", "Konami Ultimate Collection DAC", config)
 {
 	powerUp(getCurrentTime());
 }
@@ -59,12 +58,11 @@ void Yamanooto::reset(EmuTime::param time)
 	ranges::iota(bankRegs, byte(0));
 
 	scc.reset(time);
-	dac.reset(time);
 
 	invalidateDeviceRWCache(); // flush all to be sure
 }
 
-unsigned Yamanoto::getFlashAddr(unsigned addr) const
+unsigned Yamanooto::getFlashAddr(unsigned addr) const
 {
 	unsigned page8kB = (addr >> 13) - 2;
 	if (page8kB >= 4) return unsigned(-1); // outside [0x4000, 0xBFFF]
@@ -73,7 +71,7 @@ unsigned Yamanoto::getFlashAddr(unsigned addr) const
 	return ((mapperReg & 0xC0) << (21 - 6)) | (bank << 13) | (addr & 0x1FFF);
 }
 
-bool Yamanoto::isSCCAccess(word addr) const
+bool Yamanooto::isSCCAccess(word addr) const
 {
 	if (sccMode & 0x10) return false;
 
@@ -94,7 +92,7 @@ bool Yamanoto::isSCCAccess(word addr) const
 	}
 }
 
-byte Yamanoto::readMem(word addr, EmuTime::param time)
+byte Yamanooto::readMem(word addr, EmuTime::param time)
 {
 	if (isSCCAccess(addr)) {
 		return scc.readMem(narrow_cast<uint8_t>(addr & 0xFF), time);
@@ -106,7 +104,7 @@ byte Yamanoto::readMem(word addr, EmuTime::param time)
 		: 0xFF; // unmapped read
 }
 
-byte Yamanoto::peekMem(word addr, EmuTime::param time) const
+byte Yamanooto::peekMem(word addr, EmuTime::param time) const
 {
 	if (isSCCAccess(addr)) {
 		return scc.peekMem(narrow_cast<uint8_t>(addr & 0xFF), time);
@@ -118,7 +116,7 @@ byte Yamanoto::peekMem(word addr, EmuTime::param time) const
 		: 0xFF; // unmapped read
 }
 
-const byte* Yamanoto::getReadCacheLine(word addr) const
+const byte* Yamanooto::getReadCacheLine(word addr) const
 {
 	if (isSCCAccess(addr)) return nullptr;
 
@@ -128,7 +126,7 @@ const byte* Yamanoto::getReadCacheLine(word addr) const
 		: unmappedRead.data();
 }
 
-void Yamanoto::writeMem(word addr, byte value, EmuTime::param time)
+void Yamanooto::writeMem(word addr, byte value, EmuTime::param time)
 {
 	unsigned page8kB = (addr >> 13) - 2;
 	if (page8kB >= 4) return; // outside [0x4000, 0xBFFF]
@@ -158,11 +156,6 @@ void Yamanoto::writeMem(word addr, byte value, EmuTime::param time)
 		invalidateDeviceRCache(); // flush all to be sure
 	}
 
-
-	// DAC
-	if (isBank0Disabled() && (addr < 0x6000) && ((addr & 0x0010) == 0)) {
-		dac.writeDAC(value, time);
-	}
 
 	if (areBankRegsEnabled()) {
 		// Bank-switching
@@ -205,7 +198,7 @@ void Yamanoto::writeMem(word addr, byte value, EmuTime::param time)
 	}
 }
 
-byte* Yamanoto::getWriteCacheLine(word addr)
+byte* Yamanooto::getWriteCacheLine(word addr)
 {
 	return ((0x4000 <= addr) && (addr < 0xC000))
 	       ? nullptr        // [0x4000,0xBFFF] isn't cacheable
@@ -213,14 +206,13 @@ byte* Yamanoto::getWriteCacheLine(word addr)
 }
 
 template<typename Archive>
-void Yamanoto::serialize(Archive& ar, unsigned /*version*/)
+void Yamanooto::serialize(Archive& ar, unsigned /*version*/)
 {
 	// skip MSXRom base class
 	ar.template serializeBase<MSXDevice>(*this);
 
 	ar.serialize("flash",     flash,
 	             "scc",       scc,
-	             "DAC",       dac,
 	             "mapperReg", mapperReg,
 	             "offsetReg", offsetReg,
 	             "sccMode",   sccMode,
