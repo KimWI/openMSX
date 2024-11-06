@@ -930,7 +930,7 @@ bool ImGuiMedia::selectPatches(MediaItem& item, int& patchIndex)
 	return interacted;
 }
 
-bool ImGuiMedia::insertMediaButton(std::string_view mediaName, ItemGroup& group, bool* showWindow)
+bool ImGuiMedia::insertMediaButton(std::string_view mediaName, const ItemGroup& group, bool* showWindow)
 {
 	bool clicked = false;
 	im::Disabled(group.edit.name.empty() && !group.edit.isEject(), [&]{
@@ -1436,7 +1436,7 @@ void ImGuiMedia::cassetteMenu(CassettePlayer& cassettePlayer)
 			const auto now = motherBoard->getCurrentTime();
 			auto length = cassettePlayer.getTapeLength(now);
 			auto pos = cassettePlayer.getTapePos(now);
-			auto format = [](float time) {
+			auto format = [](double time) {
 				int t = narrow_cast<int>(time); // truncated to seconds
 				int s = t % 60; t /= 60;
 				int m = t % 60; t /= 60;

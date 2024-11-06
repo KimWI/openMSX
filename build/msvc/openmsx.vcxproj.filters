@@ -129,6 +129,9 @@
     <ClCompile Include="$(OpenMSXSrcDir)\cassette\CassettePlayerCLI.cc">
       <Filter>cassette</Filter>
     </ClCompile>
+    <ClCompile Include="$(OpenMSXSrcDir)\cassette\CassettePlayerCommand.cc">
+      <Filter>cassette</Filter>
+    </ClCompile>
     <ClCompile Include="$(OpenMSXSrcDir)\cassette\CassettePort.cc">
       <Filter>cassette</Filter>
     </ClCompile>
@@ -424,6 +427,9 @@
       <Filter>fdc</Filter>
     </ClCompile>
     <ClCompile Include="$(OpenMSXSrcDir)\fdc\XSADiskImage.cc">
+      <Filter>fdc</Filter>
+    </ClCompile>
+    <ClCompile Include="$(OpenMSXSrcDir)\fdc\XSAExtractor.cc">
       <Filter>fdc</Filter>
     </ClCompile>
     <ClCompile Include="$(OpenMSXSrcDir)\file\CompressedFileAdapter.cc">
@@ -1020,9 +1026,6 @@
     <ClCompile Include="$(OpenMSXSrcDir)\sound\ResampleHQ.cc">
       <Filter>sound</Filter>
     </ClCompile>
-    <ClCompile Include="$(OpenMSXSrcDir)\sound\ResampleLQ.cc">
-      <Filter>sound</Filter>
-    </ClCompile>
     <ClCompile Include="$(OpenMSXSrcDir)\sound\ResampleTrivial.cc">
       <Filter>sound</Filter>
     </ClCompile>
@@ -1464,7 +1467,6 @@
     <ClCompile Include="$(OpenMSXSrcDir)\input\JoyMega.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\memory\RomDooly.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\sound\ResampledSoundDevice.cc" />
-    <ClCompile Include="$(OpenMSXSrcDir)\video\scalers\GLHQLiteScaler.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\video\scalers\GLHQScaler.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\video\scalers\GLRGBScaler.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\video\scalers\GLScaleNxScaler.cc" />
@@ -1566,6 +1568,9 @@
       <Filter>cassette</Filter>
     </None>
     <None Include="$(OpenMSXSrcDir)\cassette\CassettePlayerCLI.hh">
+      <Filter>cassette</Filter>
+    </None>
+    <None Include="$(OpenMSXSrcDir)\cassette\CassettePlayerCommand.hh">
       <Filter>cassette</Filter>
     </None>
     <None Include="$(OpenMSXSrcDir)\cassette\CassettePort.hh">
@@ -1896,6 +1901,9 @@
       <Filter>fdc</Filter>
     </None>
     <None Include="$(OpenMSXSrcDir)\fdc\XSADiskImage.hh">
+      <Filter>fdc</Filter>
+    </None>
+    <None Include="$(OpenMSXSrcDir)\fdc\XSAExtractor.hh">
       <Filter>fdc</Filter>
     </None>
     <None Include="$(OpenMSXSrcDir)\file\CompressedFileAdapter.hh">
@@ -2537,9 +2545,6 @@
     <None Include="$(OpenMSXSrcDir)\sound\ResampleHQ.hh">
       <Filter>sound</Filter>
     </None>
-    <None Include="$(OpenMSXSrcDir)\sound\ResampleLQ.hh">
-      <Filter>sound</Filter>
-    </None>
     <None Include="$(OpenMSXSrcDir)\sound\ResampleTrivial.hh">
       <Filter>sound</Filter>
     </None>
@@ -2745,9 +2750,6 @@
       <Filter>utils</Filter>
     </None>
     <None Include="$(OpenMSXSrcDir)\utils\utf8_unchecked.hh">
-      <Filter>utils</Filter>
-    </None>
-    <None Include="$(OpenMSXSrcDir)\utils\vla.hh">
       <Filter>utils</Filter>
     </None>
     <None Include="$(OpenMSXSrcDir)\utils\win32-arggen.hh">
@@ -3126,7 +3128,6 @@
     <None Include="$(OpenMSXSrcDir)\utils\hash_set.hh" />
     <None Include="$(OpenMSXSrcDir)\utils\strCat.hh" />
     <None Include="$(OpenMSXSrcDir)\utils\rapidsax.hh" />
-    <None Include="$(OpenMSXSrcDir)\video\scalers\GLHQLiteScaler.hh" />
     <None Include="$(OpenMSXSrcDir)\video\scalers\GLHQScaler.hh" />
     <None Include="$(OpenMSXSrcDir)\video\scalers\GLRGBScaler.hh" />
     <None Include="$(OpenMSXSrcDir)\video\scalers\GLScaleNxScaler.hh" />
