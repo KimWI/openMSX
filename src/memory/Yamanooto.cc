@@ -119,7 +119,7 @@ namespace openmsx {
 Yamanooto::Yamanooto(
 	const DeviceConfig& config, Rom&& rom_)
 	: MSXRom(config, std::move(rom_))
-	, flash(rom, AmdFlashChip::M29W640GB, {}, config)
+	, flash(rom, AmdFlashChip::S29GL064S70TFI040, {}, config)
 	, scc("KUC SCC", config, getCurrentTime(), SCC::Mode::Compatible)
 {
 	powerUp(getCurrentTime());
