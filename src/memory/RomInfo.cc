@@ -189,7 +189,7 @@ RomType RomInfo::nameToRomType(std::string_view name)
 	return RomType::UNKNOWN;
 }
 
-std::string_view RomInfo::romTypeToName(RomType type)
+zstring_view RomInfo::romTypeToName(RomType type)
 {
 	return romTypeInfoArray[type].name;
 }

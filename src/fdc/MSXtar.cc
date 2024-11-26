@@ -209,7 +209,7 @@ MSXtar::MSXtar(SectorAccessibleDisk& sectorDisk, const MsxChar2Unicode& msxChars
 	// cache complete FAT
 	fatCacheDirty = false;
 	fatBuffer.resize(sectorsPerFat);
-	disk.readSectors(std::span{fatBuffer.data(), sectorsPerFat}, fatStart);
+	disk.readSectors(std::span{fatBuffer}, fatStart);
 }
 
 // Not used when NRVO is used (but NRVO optimization is not (yet) mandated)
@@ -498,9 +498,9 @@ FileName MSXtar::hostToMSXFileName(string_view hostName) const
 	StringOp::trimRight(file, ' ');
 	StringOp::trimRight(ext,  ' ');
 
-	// put in major case and create '_' if needed
-	string fileS(file.data(), std::min<size_t>(8, file.size()));
-	string extS (ext .data(), std::min<size_t>(3, ext .size()));
+	// truncate to 8.3 characters, put in uppercase and create '_' if needed
+	string fileS(file.substr(0, 8));
+	string extS (ext .substr(0, 3));
 	transform_in_place(fileS, toFileNameChar);
 	transform_in_place(extS,  toFileNameChar);
 
@@ -609,8 +609,8 @@ void MSXtar::alterFileInDSK(MSXDirEntry& msxDirEntry, const string& hostName)
 	if (!st) {
 		throw MSXException("Error reading host file: ", hostName);
 	}
-	unsigned hostSize = narrow<unsigned>(st->st_size);
-	unsigned remaining = hostSize;
+	auto hostSize = narrow<unsigned>(st->st_size);
+	auto remaining = hostSize;
 
 	// open host file for reading
 	File file(hostName, "rb");

@@ -100,7 +100,7 @@ void OutputArchiveBase<Derived>::serialize_blob(
 		    != Z_OK) {
 			throw MSXException("Error while compressing blob.");
 		}
-		tmp = Base64::encode(std::span{buf.data(), dstLen});
+		tmp = Base64::encode(buf.first(dstLen));
 	}
 	this->self().beginTag(tag);
 	this->self().attribute("encoding", encoding);
@@ -146,10 +146,10 @@ void InputArchiveBase<Derived>::serialize_blob(
 	this->self().endTag(tag);
 
 	if (encoding == "gz-base64") {
-		auto [buf, bufSize] = Base64::decode(tmp);
+		auto buf = Base64::decode(tmp);
 		auto dstLen = uLongf(data.size()); // TODO check for overflow?
 		if ((uncompress(std::bit_cast<Bytef*>(data.data()), &dstLen,
-		                std::bit_cast<const Bytef*>(buf.data()), uLong(bufSize))
+		                std::bit_cast<const Bytef*>(buf.data()), uLong(buf.size()))
 		     != Z_OK) ||
 		    (dstLen != data.size())) {
 			throw MSXException("Error while decompressing blob.");
@@ -179,11 +179,6 @@ void MemOutputArchive::save(std::string_view s)
 	auto buf = buffer.allocate(sizeof(size) + size);
 	memcpy(buf.data(), &size, sizeof(size));
 	ranges::copy(s, subspan(buf, sizeof(size)));
-}
-
-MemBuffer<uint8_t> MemOutputArchive::releaseBuffer(size_t& size)
-{
-	return buffer.release(size);
 }
 
 ////
