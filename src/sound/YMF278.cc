@@ -798,18 +798,19 @@ static size_t getRamSize(int ramSizeInKb)
 	    (ramSizeInKb !=  512) &&  // 512kB   -
 	    (ramSizeInKb !=  640) &&  // 512kB  128kB
 	    (ramSizeInKb != 1024) &&  // 512kB  512kB
-	    (ramSizeInKb != 2048)) {  // 512kB  512kB  512kB  512kB
+	    (ramSizeInKb != 2048) &&  // 512kB  512kB  512kB  512kB
+	    (ramSizeInKb != 4096)) {  // 2x 2MB as used in DalSoRi R2
 		throw MSXException(
-			"Wrong sample ram size for MoonSound (YMF278). "
+			"Wrong sample RAM size for YMF278. "
 			"Got ", ramSizeInKb, ", but must be one of "
-			"0, 128, 256, 512, 640, 1024 or 2048.");
+			"0, 128, 256, 512, 640, 1024, 2048 or 4096.");
 	}
 	return size_t(ramSizeInKb) * 1024; // kilo-bytes -> bytes
 }
 
 YMF278::YMF278(const std::string& name_, int ramSizeInKb,
                const DeviceConfig& config)
-	: ResampledSoundDevice(config.getMotherBoard(), name_, "MoonSound wave-part",
+	: ResampledSoundDevice(config.getMotherBoard(), name_, "OPL4 wave-part",
 	                       24, INPUT_RATE, true)
 	, motherBoard(config.getMotherBoard())
 	, debugRegisters(motherBoard, getName())
@@ -820,7 +821,7 @@ YMF278::YMF278(const std::string& name_, int ramSizeInKb,
 {
 	if (rom.size() != 0x200000) { // 2MB
 		throw MSXException(
-			"Wrong ROM for MoonSound (YMF278). The ROM (usually "
+			"Wrong ROM for OPL4 (YMF278b). The ROM (usually "
 			"called yrw801.rom) should have a size of exactly 2MB.");
 	}
 
@@ -908,8 +909,10 @@ void YMF278::reset(EmuTime::param time)
 // for the region 0x000000-0x1FFFFF. (But this routine does not handle ROM).
 unsigned YMF278::getRamAddress(unsigned addr) const
 {
-	addr -= 0x200000; // RAM starts at 0x200000
-	if (regs[2] & 2) [[unlikely]] {
+	if (romEnabled) {
+		addr -= 0x200000; // RAM starts at 0x200000
+	}
+	if (regs[2] & 2 && ram.size() != 4096 * 1024) [[unlikely]] {
 		// Normally MoonSound is used in 'memory access mode = 0'. But
 		// in the rare case that mode=1 we adjust the address.
 		if ((0x180000 <= addr) && (addr <= 0x1FFFFF)) {
@@ -956,7 +959,7 @@ uint8_t YMF278::readMem(unsigned address) const
 {
 	// Verified on real YMF278: address space wraps at 4MB.
 	address &= 0x3FFFFF;
-	if (address < 0x200000) {
+	if (romEnabled && address < 0x200000) {
 		// ROM connected to /MCS0
 		return rom[address];
 	} else {
@@ -973,7 +976,7 @@ uint8_t YMF278::readMem(unsigned address) const
 void YMF278::writeMem(unsigned address, uint8_t value)
 {
 	address &= 0x3FFFFF;
-	if (address < 0x200000) {
+	if (romEnabled && address < 0x200000) {
 		// can't write to ROM
 	} else {
 		unsigned ramAddr = getRamAddress(address);
@@ -1087,11 +1090,18 @@ void YMF278::Slot::serialize(Archive& ar, unsigned version)
 // version 2: loadTime and busyTime moved to MSXMoonSound class
 // version 3: memAdr cannot be restored from register values
 // version 4: implement ram via Ram class
+// version 5: allow mapping 2MB RAM for ROM ("romEnabled")
 template<typename Archive>
 void YMF278::serialize(Archive& ar, unsigned version)
 {
 	ar.serialize("slots",  slots,
 	             "eg_cnt", eg_cnt);
+	if (ar.versionAtLeast(version, 5)) {
+		ar.serialize("romEnabled", romEnabled);
+	} else {
+		assert(Archive::IS_LOADER);
+		romEnabled = true;
+	}
 	if (ar.versionAtLeast(version, 4)) {
 		ar.serialize("ram", ram);
 	} else {

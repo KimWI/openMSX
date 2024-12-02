@@ -34,6 +34,8 @@ public:
 
 	void setMixLevel(uint8_t x, EmuTime::param time);
 
+	void setRomEnabled(bool value) { romEnabled = value; }
+
 	template<typename Archive>
 	void serialize(Archive& ar, unsigned version);
 
@@ -125,6 +127,8 @@ private:
 	TrackedRam ram;
 
 	std::array<uint8_t, 256> regs;
+
+	bool romEnabled = true;
 };
 SERIALIZE_CLASS_VERSION(YMF278::Slot, 6);
 SERIALIZE_CLASS_VERSION(YMF278, 4);
