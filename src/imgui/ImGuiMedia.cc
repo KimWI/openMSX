@@ -807,7 +807,10 @@ bool ImGuiMedia::selectImage(ItemGroup& group, const std::string& title,
 			manager.openFile->selectFile(
 				title,
 				createFilter(),
-				[&](const auto& fn) { group.edit.name = fn; },
+				[&](const auto& fn) {
+					group.edit.name = fn;
+					group.edit.romType = RomType::UNKNOWN; // also executed for other types than ROMs, but that's harmless
+				},
 				current);
 		}
 		simpleToolTip("Browse file");
@@ -1266,7 +1269,6 @@ void ImGuiMedia::cartridgeMenu(int cartNum)
 					ImGui::SetNextItemWidth(-(ImGui::CalcTextSize("mapper-type").x + style.ItemInnerSpacing.x));
 					interacted |= selectMapperType("mapper-type", item.romType);
 					interacted |= selectPatches(item, group.patchIndex);
-					interacted |= ImGui::Checkbox("Reset MSX on inserting ROM", &resetOnInsertRom);
 					if (interacted) info.select = IMAGE;
 				});
 			});
@@ -1316,10 +1318,11 @@ void ImGuiMedia::cartridgeMenu(int cartNum)
 			if (!current.empty()) {
 				ImGui::RadioButton("Eject", std::bit_cast<int*>(&info.select), to_underlying(EMPTY));
 			}
+			ImGui::Checkbox("Reset MSX on changes", &resetOnCartChanges);
 		});
 		if (insertMediaButton(info.select == EXTENSION ? extName : cartName,
 		                      info.groups[info.select], &info.show)) {
-			if (resetOnInsertRom && info.select == IMAGE) {
+			if (resetOnCartChanges) {
 				manager.executeDelayed(TclObject("reset"));
 			}
 		}
